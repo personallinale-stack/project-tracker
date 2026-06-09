@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>متابعة تقدم الفريق</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f0f0f;
+  --bg2:#1a1a1a;
+  --bg3:#242424;
+  --bg4:#2e2e2e;
+  --border:#333;
+  --border2:#444;
+  --text:#f0f0f0;
+  --text2:#999;
+  --text3:#666;
+  --blue:#3b82f6;
+  --blue-bg:#1e3a5f;
+  --green:#22c55e;
+  --green-bg:#14532d;
+  --yellow:#f59e0b;
+  --yellow-bg:#451a03;
+  --red:#ef4444;
+  --red-bg:#450a0a;
+  --purple:#a855f7;
+  --purple-bg:#3b0764;
+  --teal:#14b8a6;
+  --teal-bg:#134e4a;
+}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
+
+/* TOP BAR */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 24px;background:var(--bg2);
+  border-bottom:1px solid var(--border);
+  flex-wrap:wrap;gap:12px;position:sticky;top:0;z-index:10;
+}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.app-title{font-size:16px;font-weight:600;color:var(--text)}
+.sync-dot{width:8px;height:8px;border-radius:50%;background:#666;transition:background .3s;flex-shrink:0}
+.sync-dot.connected{background:var(--green);box-shadow:0 0 6px var(--green)}
+.sync-dot.syncing{background:var(--yellow);animation:pulse .6s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.sync-label{font-size:12px;color:var(--text2)}
+
+.deadline-box{
+  display:flex;align-items:center;gap:10px;
+  background:var(--bg3);border:1px solid var(--border);
+  border-radius:8px;padding:7px 14px;
+}
+.deadline-label{font-size:12px;color:var(--text2)}
+.deadline-dates{display:flex;gap:8px;align-items:center}
+.deadline-dates input[type=date]{
+  font-size:12px;border:1px solid var(--border2);border-radius:6px;
+  padding:4px 8px;background:var(--bg4);color:var(--text);
+  width:130px;outline:none;cursor:pointer;
+}
+.deadline-dates input[type=date]:focus{border-color:var(--blue)}
+.deadline-sep{font-size:12px;color:var(--text3)}
+
+/* MAIN */
+.main{padding:24px;max-width:1200px;margin:0 auto}
+
+.toolbar{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:13px;padding:7px 14px;border-radius:8px;
+  border:1px solid var(--border2);background:var(--bg3);
+  color:var(--text);cursor:pointer;transition:all .15s;font-family:inherit;
+}
+.btn:hover{background:var(--bg4);border-color:var(--border2)}
+.btn-primary{background:var(--blue-bg);border-color:var(--blue);color:#93c5fd}
+.btn-primary:hover{opacity:.85}
+.online-count{font-size:12px;color:var(--text2);margin-right:auto;display:flex;align-items:center;gap:6px}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+
+.card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:12px;padding:16px;
+  transition:border-color .2s;
+}
+.card:hover{border-color:var(--border2)}
+
+.card-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.avatar{
+  width:38px;height:38px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:600;flex-shrink:0;
+}
+.name-wrap{flex:1;min-width:0}
+.card-name{
+  font-size:14px;font-weight:500;color:var(--text);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  cursor:pointer;padding:2px 0;border-bottom:1px solid transparent;
+  transition:border-color .15s;
+}
+.card-name:hover{border-color:var(--border2)}
+.name-input{
+  font-size:14px;font-weight:500;width:100%;
+  border:none;border-bottom:1px solid var(--blue);
+  background:transparent;color:var(--text);outline:none;padding:2px 0;
+  font-family:inherit;
+}
+.card-pct{font-size:12px;font-weight:500;color:var(--text2);flex-shrink:0}
+
+.cuts-header{
+  font-size:11px;color:var(--text3);margin-bottom:8px;
+  display:flex;justify-content:space-between;text-transform:uppercase;
+  letter-spacing:.5px;
+}
+.cut-row{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+
+.cut-num{
+  width:30px;height:22px;display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:600;border-radius:5px;
+  background:var(--bg4);color:var(--text2);flex-shrink:0;cursor:pointer;
+  border:1px solid transparent;transition:all .15s;
+}
+.cut-num:hover{border-color:var(--blue);color:var(--blue)}
+.cut-num-input{
+  width:30px;height:22px;font-size:12px;font-weight:600;text-align:center;
+  border:1px solid var(--blue);border-radius:5px;padding:0;
+  background:var(--bg3);color:var(--text);outline:none;flex-shrink:0;
+  font-family:inherit;
+}
+.bar-wrap{flex:1;position:relative}
+.bar-track{
+  height:8px;background:var(--bg4);border-radius:4px;
+  overflow:hidden;cursor:pointer;
+}
+.bar-fill{height:100%;border-radius:4px;transition:width .25s,background .25s}
+
+.pct-input{
+  width:38px;font-size:12px;text-align:center;
+  border:1px solid var(--border2);border-radius:5px;padding:2px 3px;
+  background:var(--bg4);color:var(--text);outline:none;flex-shrink:0;
+  font-family:inherit;
+}
+.pct-input:focus{border-color:var(--blue)}
+
+.cut-check{width:15px;height:15px;accent-color:var(--blue);cursor:pointer;flex-shrink:0}
+
+.cut-del{
+  width:18px;height:18px;display:flex;align-items:center;justify-content:center;
+  font-size:13px;color:var(--text3);background:none;border:none;cursor:pointer;
+  border-radius:4px;flex-shrink:0;opacity:0;transition:opacity .15s;
+}
+.cut-row:hover .cut-del{opacity:1}
+.cut-del:hover{background:var(--red-bg);color:var(--red)}
+
+.cut-add-btn{
+  font-size:12px;color:var(--blue);background:none;border:none;
+  cursor:pointer;padding:0;display:flex;align-items:center;gap:4px;
+  margin-top:4px;font-family:inherit;opacity:.8;
+}
+.cut-add-btn:hover{opacity:1}
+
+.card-footer{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:12px;padding-top:10px;border-top:1px solid var(--border);
+}
+.badge{font-size:11px;padding:3px 9px;border-radius:20px;font-weight:500}
+.badge-done{background:var(--green-bg);color:var(--green)}
+.badge-prog{background:var(--yellow-bg);color:var(--yellow)}
+.badge-none{background:var(--bg4);color:var(--text3)}
+
+.del-member-btn{
+  font-size:11px;color:var(--text3);background:none;border:none;
+  cursor:pointer;padding:0;display:flex;align-items:center;gap:3px;
+  font-family:inherit;transition:color .15s;
+}
+.del-member-btn:hover{color:var(--red)}
+
+.add-card{
+  border:1px dashed var(--border);background:transparent;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;font-size:13px;color:var(--text3);cursor:pointer;
+  min-height:180px;border-radius:12px;transition:all .15s;
+}
+.add-card:hover{background:var(--bg2);border-color:var(--border2);color:var(--text2)}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--bg3);border:1px solid var(--border2);border-radius:8px;
+  padding:10px 20px;font-size:13px;color:var(--text);
+  transition:transform .3s;z-index:100;white-space:nowrap;
+}
+.toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="sync-dot" id="syncDot"></div>
+    <span class="app-title">متابعة تقدم الفريق</span>
+    <span class="sync-label" id="syncLabel">جاري الاتصال...</span>
+  </div>
+  <div class="deadline-box">
+    <i class="ti ti-calendar" style="color:#666;font-size:15px"></i>
+    <span class="deadline-label">Deadline</span>
+    <div class="deadline-dates">
+      <input type="date" id="dlFrom" onchange="updateDeadline()"/>
+      <span class="deadline-sep">→</span>
+      <input type="date" id="dlTo" onchange="updateDeadline()"/>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="toolbar">
+    <span class="online-count" id="onlineCount"></span>
+    <button class="btn btn-primary" onclick="addMember()">
+      <i class="ti ti-user-plus"></i> أضف موظف
+    </button>
+  </div>
+  <div class="grid" id="grid"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const COLORS=[
+  {bg:'#1e3a5f',text:'#93c5fd'},
+  {bg:'#134e4a',text:'#5eead4'},
+  {bg:'#451a03',text:'#fcd34d'},
+  {bg:'#3b0764',text:'#d8b4fe'},
+  {bg:'#450a0a',text:'#fca5a5'},
+  {bg:'#14532d',text:'#86efac'},
+];
+
+let state={deadline:{from:'',to:''},members:[],nextId:10};
+let editingName=null;
+let editingCutNum={id:null,i:null};
+let ws=null;
+let reconnectTimer=null;
+let isSyncing=false;
+
+// ─── WebSocket ───────────────────────────────────────────
+function connect(){
+  const proto=location.protocol==='https:'?'wss':'ws';
+  ws=new WebSocket(`${proto}://${location.host}`);
+
+  ws.onopen=()=>{
+    setSyncStatus('connected');
+    clearTimeout(reconnectTimer);
+  };
+  ws.onmessage=(e)=>{
+    const msg=JSON.parse(e.data);
+    if(msg.type==='init'||msg.type==='update'){
+      state=msg.state;
+      render();
+      if(msg.type==='update') showToast('تم التحديث من موظف آخر');
+    }
+  };
+  ws.onclose=()=>{
+    setSyncStatus('disconnected');
+    reconnectTimer=setTimeout(connect,3000);
+  };
+  ws.onerror=()=>ws.close();
+}
+
+function pushState(){
+  if(ws&&ws.readyState===WebSocket.OPEN){
+    isSyncing=true;
+    setSyncStatus('syncing');
+    ws.send(JSON.stringify({type:'update',state}));
+    setTimeout(()=>{isSyncing=false;setSyncStatus('connected');},400);
+  }
+}
+
+function setSyncStatus(s){
+  const dot=document.getElementById('syncDot');
+  const lbl=document.getElementById('syncLabel');
+  dot.className='sync-dot';
+  if(s==='connected'){dot.classList.add('connected');lbl.textContent='متصل — التحديثات فورية';}
+  else if(s==='syncing'){dot.classList.add('syncing');lbl.textContent='جاري المزامنة...';}
+  else{lbl.textContent='غير متصل — إعادة الاتصال...';}
+}
+
+// ─── Render ──────────────────────────────────────────────
+function barColor(pct,done){
+  if(done||pct>=100)return'#22c55e';
+  if(pct>50)return'#f59e0b';
+  if(pct>0)return'#3b82f6';
+  return'#333';
+}
+function badge(m){
+  const t=m.cuts.length,d=m.cuts.filter(c=>c.done).length;
+  if(!t)return`<span class="badge badge-none">لا يوجد كتات</span>`;
+  if(d===t)return`<span class="badge badge-done"><i class="ti ti-check"></i> مكتمل ${d}/${t}</span>`;
+  if(d)return`<span class="badge badge-prog">جاري ${d}/${t}</span>`;
+  return`<span class="badge badge-none">0/${t}</span>`;
+}
+function totalPct(m){
+  if(!m.cuts.length)return 0;
+  return Math.round(m.cuts.reduce((a,c)=>a+(c.done?100:c.pct),0)/m.cuts.length);
+}
+function initials(n){return n.trim().slice(0,2)}
+
+function render(){
+  const grid=document.getElementById('grid');
+  const scrollY=window.scrollY;
+  grid.innerHTML='';
+
+  // Sync deadline inputs without triggering onchange
+  const dlFrom=document.getElementById('dlFrom');
+  const dlTo=document.getElementById('dlTo');
+  if(document.activeElement!==dlFrom) dlFrom.value=state.deadline.from||'';
+  if(document.activeElement!==dlTo) dlTo.value=state.deadline.to||'';
+
+  state.members.forEach(m=>{
+    const card=document.createElement('div');
+    card.className='card';
+    const col=COLORS[m.color%COLORS.length];
+    const tp=totalPct(m);
+
+    const nameHtml=editingName===m.id
+      ?`<input class="name-input" id="ni-${m.id}" value="${esc(m.name)}" maxlength="20"/>`
+      :`<span class="card-name" ondblclick="startEditName(${m.id})" title="انقر مزدوج للتعديل">${esc(m.name)}</span>`;
+
+    const cutsHtml=m.cuts.map((c,i)=>{
+      const isEditing=editingCutNum.id===m.id&&editingCutNum.i===i;
+      const numEl=isEditing
+        ?`<input class="cut-num-input" id="cni-${m.id}-${i}" type="number" min="1" max="999" value="${c.num}"/>`
+        :`<span class="cut-num" onclick="startEditCutNum(${m.id},${i})" title="انقر لتعديل الرقم">${c.num}</span>`;
+      return`<div class="cut-row">
+        ${numEl}
+        <div class="bar-wrap">
+          <div class="bar-track" onclick="cyclePct(${m.id},${i})">
+            <div class="bar-fill" style="width:${c.done?100:c.pct}%;background:${barColor(c.pct,c.done)}"></div>
+          </div>
+        </div>
+        <input class="pct-input" type="number" min="0" max="100" value="${c.done?100:c.pct}" onchange="setPct(${m.id},${i},this.value)"/>
+        <input type="checkbox" class="cut-check" ${c.done?'checked':''} onchange="toggleDone(${m.id},${i},this.checked)"/>
+        <button class="cut-del" onclick="removeCut(${m.id},${i})"><i class="ti ti-x"></i></button>
+      </div>`;
+    }).join('');
+
+    card.innerHTML=`
+      <div class="card-header">
+        <div class="avatar" style="background:${col.bg};color:${col.text}">${initials(m.name)}</div>
+        <div class="name-wrap">${nameHtml}</div>
+        <span class="card-pct">${tp}%</span>
+      </div>
+      <div class="cuts-header"><span>Cuts</span><span>${m.cuts.length}</span></div>
+      ${cutsHtml}
+      <button class="cut-add-btn" onclick="addCut(${m.id})"><i class="ti ti-plus"></i> أضف كت</button>
+      <div class="card-footer">
+        ${badge(m)}
+        <button class="del-member-btn" onclick="removeMember(${m.id})"><i class="ti ti-trash"></i> احذف</button>
+      </div>`;
+    grid.appendChild(card);
+
+    // Restore focus for name editing
+    if(editingName===m.id){
+      const inp=document.getElementById(`ni-${m.id}`);
+      if(inp){inp.focus();inp.select();
+        inp.onblur=()=>commitName(m.id,inp.value);
+        inp.onkeydown=e=>{if(e.key==='Enter')inp.blur();if(e.key==='Escape'){editingName=null;render();}};}
+    }
+    // Restore focus for cut num editing
+    if(editingCutNum.id===m.id&&editingCutNum.i!=null){
+      const i=editingCutNum.i;
+      const inp=document.getElementById(`cni-${m.id}-${i}`);
+      if(inp){inp.focus();inp.select();
+        inp.onblur=()=>commitCutNum(m.id,i,inp.value);
+        inp.onkeydown=e=>{if(e.key==='Enter')inp.blur();if(e.key==='Escape'){editingCutNum={id:null,i:null};render();}};}
+    }
+  });
+
+  const addCard=document.createElement('div');
+  addCard.className='add-card';
+  addCard.innerHTML=`<i class="ti ti-user-plus" style="font-size:24px"></i><span>أضف موظف</span>`;
+  addCard.onclick=addMember;
+  grid.appendChild(addCard);
+
+  window.scrollTo(0,scrollY);
+}
+
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+// ─── Actions ─────────────────────────────────────────────
+function updateDeadline(){
+  state.deadline.from=document.getElementById('dlFrom').value;
+  state.deadline.to=document.getElementById('dlTo').value;
+  pushState();
+}
+function startEditName(id){editingName=id;render();}
+function commitName(id,val){
+  const m=state.members.find(x=>x.id===id);
+  if(m&&val.trim())m.name=val.trim();
+  editingName=null;render();pushState();
+}
+function addMember(){
+  state.members.push({id:state.nextId++,name:'موظف جديد',color:state.members.length,cuts:[{num:1,done:false,pct:0}]});
+  editingName=state.members[state.members.length-1].id;
+  render();pushState();
+}
+function removeMember(id){
+  if(!confirm('تأكيد حذف الموظف؟'))return;
+  state.members=state.members.filter(m=>m.id!==id);
+  render();pushState();
+}
+function addCut(id){
+  const m=state.members.find(x=>x.id===id);
+  if(m){const nums=m.cuts.map(c=>c.num);m.cuts.push({num:nums.length?Math.max(...nums)+1:1,done:false,pct:0});}
+  render();pushState();
+}
+function removeCut(id,i){
+  const m=state.members.find(x=>x.id===id);if(m)m.cuts.splice(i,1);
+  render();pushState();
+}
+function startEditCutNum(id,i){editingCutNum={id,i};render();}
+function commitCutNum(id,i,val){
+  const m=state.members.find(x=>x.id===id);
+  const v=parseInt(val);if(m&&v>0)m.cuts[i].num=v;
+  editingCutNum={id:null,i:null};render();pushState();
+}
+function setPct(id,i,val){
+  const m=state.members.find(x=>x.id===id);if(!m)return;
+  const v=Math.min(100,Math.max(0,parseInt(val)||0));
+  m.cuts[i].pct=v;m.cuts[i].done=v===100;
+  render();pushState();
+}
+function cyclePct(id,i){
+  const m=state.members.find(x=>x.id===id);if(!m||m.cuts[i].done)return;
+  const steps=[0,25,50,75,100];
+  const idx=steps.findIndex(s=>s===m.cuts[i].pct);
+  const next=steps[(idx+1)%steps.length];
+  m.cuts[i].pct=next;if(next===100)m.cuts[i].done=true;
+  render();pushState();
+}
+function toggleDone(id,i,val){
+  const m=state.members.find(x=>x.id===id);if(m){m.cuts[i].done=val;m.cuts[i].pct=val?100:0;}
+  render();pushState();
+}
+
+// ─── Toast ───────────────────────────────────────────────
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+connect();
+</script>
+</body>
+</html>
