@@ -1,0 +1,142 @@
+{
+  "deadline": {
+    "from": "2026-06-11",
+    "to": "2026-06-01"
+  },
+  "members": [
+    {
+      "id": 2,
+      "name": "مجد",
+      "color": 0,
+      "cuts": [
+        {
+          "num": 1,
+          "done": false,
+          "pct": 0
+        },
+        {
+          "num": 2,
+          "done": false,
+          "pct": 0
+        },
+        {
+          "num": 3,
+          "done": false,
+          "pct": 0
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "نهى",
+      "color": 1,
+      "cuts": [
+        {
+          "num": 1,
+          "done": true,
+          "pct": 100
+        },
+        {
+          "num": 2,
+          "done": true,
+          "pct": 100
+        },
+        {
+          "num": 3,
+          "done": false,
+          "pct": 50
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "عبد الله",
+      "color": 2,
+      "cuts": [
+        {
+          "num": 1,
+          "done": false,
+          "pct": 80
+        },
+        {
+          "num": 2,
+          "done": true,
+          "pct": 100
+        },
+        {
+          "num": 3,
+          "done": true,
+          "pct": 100
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "رولانا",
+      "color": 3,
+      "cuts": [
+        {
+          "num": 1,
+          "done": true,
+          "pct": 100
+        },
+        {
+          "num": 2,
+          "done": true,
+          "pct": 100
+        },
+        {
+          "num": 3,
+          "done": true,
+          "pct": 100
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "آية الحلواية",
+      "color": 4,
+      "cuts": [
+        {
+          "num": 1,
+          "done": true,
+          "pct": 100
+        },
+        {
+          "num": 2,
+          "done": true,
+          "pct": 100
+        },
+        {
+          "num": 3,
+          "done": false,
+          "pct": 88
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "دعاء",
+      "color": 5,
+      "cuts": [
+        {
+          "num": 1,
+          "done": false,
+          "pct": 0
+        },
+        {
+          "num": 2,
+          "done": false,
+          "pct": 0
+        },
+        {
+          "num": 3,
+          "done": false,
+          "pct": 0
+        }
+      ]
+    }
+  ],
+  "nextId": 8,
+  "projectName": "اعلان الحليب"
+}
