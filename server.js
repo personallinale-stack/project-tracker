@@ -11,30 +11,47 @@ const wss = new WebSocket.Server({ server });
 const DATA_FILE = path.join(__dirname, 'data', 'state.json');
 const PORT = process.env.PORT || 3000;
 
-// Default state
+// Ensure data directory exists
+const dataDir = path.join(__dirname, 'data');
+if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+
 const DEFAULT_STATE = {
   deadline: { from: '', to: '' },
-  members: [
-    { id: 1, name: 'موظف 1', color: 0, cuts: [{ num: 1, done: false, pct: 0 }] },
-    { id: 2, name: 'موظف 2', color: 1, cuts: [{ num: 1, done: false, pct: 0 }] },
-  ],
+  members: [],
   nextId: 10
 };
 
-// Load or init state
 function loadState() {
   try {
     if (fs.existsSync(DATA_FILE)) {
-      return JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
+      const raw = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
+      // Merge: preserve saved members/deadline/nextId, fill missing fields safely
+      return {
+        deadline: raw.deadline || DEFAULT_STATE.deadline,
+        members: (raw.members || []).map(m => ({
+          ...m,
+          cuts: (m.cuts || []).map(c => ({
+            num: c.num ?? 1,
+            done: c.done ?? false,
+            pct: c.pct ?? 0,
+          })),
+          comments: m.comments || [],
+        })),
+        nextId: raw.nextId || DEFAULT_STATE.nextId,
+      };
     }
-  } catch (e) {}
+  } catch (e) {
+    console.error('Error loading state:', e.message);
+  }
   return JSON.parse(JSON.stringify(DEFAULT_STATE));
 }
 
 function saveState(state) {
   try {
     fs.writeFileSync(DATA_FILE, JSON.stringify(state, null, 2));
-  } catch (e) {}
+  } catch (e) {
+    console.error('Error saving state:', e.message);
+  }
 }
 
 let state = loadState();
@@ -42,7 +59,6 @@ let state = loadState();
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
-// Broadcast to all connected clients
 function broadcast(data, excludeWs = null) {
   const msg = JSON.stringify(data);
   wss.clients.forEach(client => {
@@ -53,7 +69,6 @@ function broadcast(data, excludeWs = null) {
 }
 
 wss.on('connection', (ws) => {
-  // Send current state to new client
   ws.send(JSON.stringify({ type: 'init', state }));
 
   ws.on('message', (raw) => {
@@ -61,9 +76,17 @@ wss.on('connection', (ws) => {
     try { msg = JSON.parse(raw); } catch (e) { return; }
 
     if (msg.type === 'update') {
-      state = msg.state;
+      // Safely merge incoming state with existing — never lose data
+      state = {
+        deadline: msg.state.deadline || state.deadline,
+        nextId: msg.state.nextId || state.nextId,
+        members: (msg.state.members || []).map(m => ({
+          ...m,
+          cuts: (m.cuts || []),
+          comments: m.comments || [],
+        })),
+      };
       saveState(state);
-      // Broadcast update to all other clients
       broadcast({ type: 'update', state }, ws);
     }
   });
